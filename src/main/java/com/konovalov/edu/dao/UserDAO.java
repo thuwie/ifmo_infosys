@@ -1,33 +1,20 @@
 package com.konovalov.edu.dao;
 
 import com.konovalov.edu.entity.User;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
-public class UserDAO {
-    public List<User> getAllusers() {
-        return null;
-    }
+public interface UserDAO {
 
-    public User getuserById(int userId) {
-        return null;
-    }
+    List<User> getAllusers();
 
-    public void addUser(User user) {
+    User getuserById(int userId);
 
-    }
+    void addUser(User user);
 
-    public void updateUser(User user) {
+    void updateUser(User user);
 
-    }
+    void deleteUser(int userId);
 
-    public void deleteUser(int userId) {
-
-    }
-
-    public boolean userExists(String firstName, String secondName, String occupation) {
-        return false;
-    }
+    boolean userExists(String firstName, String secondName, String occupation);
 }
