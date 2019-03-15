@@ -3,6 +3,7 @@ package com.konovalov.edu.entity;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,6 +26,9 @@ public class Vacation implements Serializable {
 
     @Column(name="type_id")
     private int typeId;
+
+    @Column(name="vacation_start")
+    private Date vacationStart;
 
     @Column(name="vacation_days")
     private int vacationDays;
