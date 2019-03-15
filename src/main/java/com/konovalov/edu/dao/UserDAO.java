@@ -27,7 +27,7 @@ public class UserDAO {
 
     }
 
-    public boolean userExists(String username) {
+    public boolean userExists(String firstName, String secondName, String occupation) {
         return false;
     }
 }
