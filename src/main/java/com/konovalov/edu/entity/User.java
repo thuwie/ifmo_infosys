@@ -12,22 +12,16 @@ public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "article_id")
-    private int articleId;
+    @Column(name = "user_id")
+    private int userId;
 
-    @Column(name = "role_id")
-    private Integer roleId;
+    @Column(name = "employee")
+    private int employeeId;
 
-    @Column(name = "occupation_id")
-    private Integer occupationId;
+    @Column(name = "username")
+    private String username;
 
-    @Column(name = "first_name")
-    private String firstName;
-
-    @Column(name = "second_name")
-    private String secondName;
-
-    @Column(name = "vacation_days")
-    private Integer vacationDays;
+    @Column(name = "password")
+    private String password;
 
 }
