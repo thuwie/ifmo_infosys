@@ -54,7 +54,7 @@ public class UserDaoImplTest {
                 .setParameter(USERNAME, user.getUsername())
                 .setParameter(PASSWORD, user.getPassword())
                 .executeUpdate();
-        
+
         // OR:
 
         dao.addUser(user);
