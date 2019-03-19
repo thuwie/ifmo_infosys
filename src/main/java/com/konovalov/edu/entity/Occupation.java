@@ -9,9 +9,8 @@ import java.io.Serializable;
 @Entity
 @Table(name = "occupation")
 public class Occupation implements Serializable {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "occupation_id")
     private int occupationId;
 

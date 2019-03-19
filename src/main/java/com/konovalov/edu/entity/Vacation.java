@@ -12,7 +12,7 @@ import java.util.Date;
 public class Vacation implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vacation_id")
     private int vacationId;
 

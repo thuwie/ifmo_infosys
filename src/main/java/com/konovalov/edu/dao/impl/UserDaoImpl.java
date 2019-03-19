@@ -16,61 +16,30 @@ public class UserDaoImpl extends Dao implements UserDao {
     private static final String USER_ID = "userId";
 
     public List<User> getAllUsers() {
-        return (List<User>) getCurrentSession().createSQLQuery("SELECT * FROM user")
-                .addEntity(User.class)
-                .list();
+        return (List<User>) getCurrentSession().createCriteria(User.class).list();
     }
 
     public User getUserById(int userId) {
-        return (User) getCurrentSession().createSQLQuery("SELECT * FROM user WHERE user_id = :" + USER_ID)
-                .addEntity(User.class)
-                .setParameter(USER_ID, userId)
-                .uniqueResult();
+        return getCurrentSession().get(User.class, userId);
     }
 
     public void addUser(User user) {
-        getCurrentSession().createSQLQuery(
-                "INSERT INTO user (employee, username, password) " +
-                        "VALUES (:" + EMPLOYEE + ", :" + USERNAME + ", :" + PASSWORD + ")")
-                .setParameter(EMPLOYEE, user.getEmployeeId())
-                .setParameter(USERNAME, user.getUsername())
-                .setParameter(PASSWORD, user.getPassword())
-                .executeUpdate();
-
+        getCurrentSession().save(user);
     }
 
     public void updateUser(User user) {
-        getCurrentSession().createSQLQuery(
-                "UPDATE user " +
-                        "SET employee = :" + EMPLOYEE +
-                        ", username = :" + USERNAME +
-                        ", password = :" + PASSWORD +
-                        "WHERE user_id = :" + USER_ID)
-                .setParameter(EMPLOYEE, user.getEmployeeId())
-                .setParameter(USERNAME, user.getUsername())
-                .setParameter(PASSWORD, user.getPassword())
-                .setParameter(USER_ID, user.getUserId())
-                .executeUpdate();
-
+        getCurrentSession().update(user);
     }
 
     public void deleteUser(int userId) {
-        getCurrentSession().createSQLQuery(
-                "DELETE FROM user " +
-                        "WHERE user_id = :" + USER_ID)
-                .setParameter(USER_ID, userId)
-                .executeUpdate();
+        getCurrentSession().delete(getUserById(userId));
     }
 
-    public boolean ifUserExists(String password, Integer employeeId, String username) {
-        User user = (User) getCurrentSession().createSQLQuery("SELECT * FROM user " +
-                "WHERE username = :" + USERNAME +
-                "AND employee = :" + EMPLOYEE +
-                "AND password = :" + PASSWORD)
-                .addEntity(User.class)
-                .setParameter(EMPLOYEE, employeeId)
-                .setParameter(USERNAME, username)
-                .setParameter(PASSWORD, password);
-        return user != null;
+    public boolean isUserExists(String password, Integer employeeId, String username) {
+        User user = new User();
+        user.setUsername(username);
+        user.setEmployeeId(employeeId);
+        user.setPassword(password);
+        return getCurrentSession().contains(user);
     }
 }

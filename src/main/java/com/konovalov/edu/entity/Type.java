@@ -9,9 +9,8 @@ import java.io.Serializable;
 @Entity
 @Table(name = "type")
 public class Type implements Serializable {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "type_id")
     private int roleId;
 
