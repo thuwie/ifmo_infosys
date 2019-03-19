@@ -6,7 +6,7 @@ import com.konovalov.edu.entity.Vacation;
 import java.util.Date;
 import java.util.List;
 
-public interface VacationDAO {
+public interface VacationDao {
 
     List<Vacation> getuserById(int userId);
 

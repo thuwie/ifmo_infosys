@@ -4,11 +4,11 @@ import com.konovalov.edu.entity.User;
 
 import java.util.List;
 
-public interface UserDAO {
+public interface UserDao {
 
-    List<User> getAllusers();
+    List<User> getAllUsers();
 
-    User getuserById(int userId);
+    User getUserById(int userId);
 
     void addUser(User user);
 
@@ -16,5 +16,5 @@ public interface UserDAO {
 
     void deleteUser(int userId);
 
-    boolean userExists(String firstName, String secondName, String occupation);
+    boolean ifUserExists(String password, Integer employeeId, String username);
 }

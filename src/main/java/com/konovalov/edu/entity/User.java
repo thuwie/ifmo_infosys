@@ -16,7 +16,7 @@ public class User implements Serializable {
     private int userId;
 
     @Column(name = "employee")
-    private int employeeId;
+    private Integer employeeId;
 
     @Column(name = "username")
     private String username;
