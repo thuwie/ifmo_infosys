@@ -16,5 +16,5 @@ public interface UserDao {
 
     void deleteUser(int userId);
 
-    boolean isUserExists(String password, Integer employeeId, String username);
+    boolean isUserExists(User user);
 }

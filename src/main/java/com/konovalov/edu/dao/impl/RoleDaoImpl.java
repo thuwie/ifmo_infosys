@@ -1,60 +1,60 @@
 package com.konovalov.edu.dao.impl;
 
 import com.konovalov.edu.dao.Dao;
-import com.konovalov.edu.dao.VacationDao;
-import com.konovalov.edu.entity.Vacation;
+import com.konovalov.edu.dao.RoleDao;
+import com.konovalov.edu.entity.Role;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public class VacationDaoImpl extends Dao implements VacationDao {
+public class RoleDaoImpl extends Dao implements RoleDao {
 
-    public List<Vacation> getAllVacations() {
+    public List<Role> getAllRoles() {
         getCurrentSession().beginTransaction();
-        List<Vacation> vacations = (List<Vacation>) getCurrentSession().createCriteria(Vacation.class).list();
+        List<Role> roles = (List<Role>) getCurrentSession().createCriteria(Role.class).list();
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
 
-        return vacations;
+        return roles;
     }
 
-    public Vacation getVacationById(int vacationId) {
+    public Role getRoleById(int roleId) {
         getCurrentSession().beginTransaction();
-        Vacation vacation = getCurrentSession().get(Vacation.class, vacationId);
+        Role role = getCurrentSession().get(Role.class, roleId);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
 
-        return vacation;
+        return role;
     }
 
-    public void addVacation(Vacation vacation) {
+    public void addRole(Role role) {
         getCurrentSession().beginTransaction();
-        getCurrentSession().save(vacation);
-        getCurrentSession().getTransaction().commit();
-        getCurrentSession().close();
-    }
-
-    public void updateVacation(Vacation vacation) {
-        getCurrentSession().beginTransaction();
-        getCurrentSession().update(vacation);
+        getCurrentSession().save(role);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
     }
 
-    public void deleteVacation(int vacationId) {
+    public void updateRole(Role role) {
         getCurrentSession().beginTransaction();
-        getCurrentSession().delete(getVacationById(vacationId));
+        getCurrentSession().update(role);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
     }
 
-    public boolean isVacationExists(Vacation vacation) {
+    public void deleteRole(int roleId) {
         getCurrentSession().beginTransaction();
-        boolean isVacationExists = getCurrentSession().contains(vacation);
+        getCurrentSession().delete(getRoleById(roleId));
+        getCurrentSession().getTransaction().commit();
+        getCurrentSession().close();
+    }
+
+    public boolean isRoleExists(Role role) {
+        getCurrentSession().beginTransaction();
+        boolean isRoleExists = getCurrentSession().contains(role);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
 
-        return isVacationExists;
+        return isRoleExists;
     }
 }

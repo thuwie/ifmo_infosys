@@ -10,36 +10,51 @@ import java.util.List;
 @Repository
 public class UserDaoImpl extends Dao implements UserDao {
 
-    private static final String EMPLOYEE = "employee";
-    private static final String USERNAME = "username";
-    private static final String PASSWORD = "password";
-    private static final String USER_ID = "userId";
-
     public List<User> getAllUsers() {
-        return (List<User>) getCurrentSession().createCriteria(User.class).list();
+        getCurrentSession().beginTransaction();
+        List<User> users = (List<User>) getCurrentSession().createCriteria(User.class).list();
+        getCurrentSession().getTransaction().commit();
+        getCurrentSession().close();
+
+        return users;
     }
 
     public User getUserById(int userId) {
-        return getCurrentSession().get(User.class, userId);
+        getCurrentSession().beginTransaction();
+        User user = getCurrentSession().get(User.class, userId);
+        getCurrentSession().getTransaction().commit();
+        getCurrentSession().close();
+
+        return user;
     }
 
     public void addUser(User user) {
+        getCurrentSession().beginTransaction();
         getCurrentSession().save(user);
+        getCurrentSession().getTransaction().commit();
+        getCurrentSession().close();
     }
 
     public void updateUser(User user) {
+        getCurrentSession().beginTransaction();
         getCurrentSession().update(user);
+        getCurrentSession().getTransaction().commit();
+        getCurrentSession().close();
     }
 
     public void deleteUser(int userId) {
+        getCurrentSession().beginTransaction();
         getCurrentSession().delete(getUserById(userId));
+        getCurrentSession().getTransaction().commit();
+        getCurrentSession().close();
     }
 
-    public boolean isUserExists(String password, Integer employeeId, String username) {
-        User user = new User();
-        user.setUsername(username);
-        user.setEmployeeId(employeeId);
-        user.setPassword(password);
-        return getCurrentSession().contains(user);
+    public boolean isUserExists(User user) {
+        getCurrentSession().beginTransaction();
+        boolean isUserExists = getCurrentSession().contains(user);
+        getCurrentSession().getTransaction().commit();
+        getCurrentSession().close();
+
+        return isUserExists;
     }
 }

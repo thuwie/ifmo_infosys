@@ -12,7 +12,6 @@
         <property name="connection.username">sysuser</property>
         <property name="connection.password">myverypassword</property>
         <property name="connection.autocommit">true</property>
-        <property name="hibernate.default_schema">public</property>
         <property name="show_sql">true</property>
         <property name="hbm2ddl.auto">update</property>
 

@@ -7,12 +7,12 @@ import java.io.Serializable;
 
 @Data
 @Entity
-@Table(name = "occupation")
+@Table(name = "occupations")
 public class Occupation implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "occupation_id")
-    private int occupationId;
+    private Integer occupationId;
 
     @Column(name = "name")
     private String name;

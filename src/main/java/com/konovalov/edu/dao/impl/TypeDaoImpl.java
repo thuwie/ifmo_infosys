@@ -1,60 +1,60 @@
 package com.konovalov.edu.dao.impl;
 
 import com.konovalov.edu.dao.Dao;
-import com.konovalov.edu.dao.VacationDao;
-import com.konovalov.edu.entity.Vacation;
+import com.konovalov.edu.dao.TypeDao;
+import com.konovalov.edu.entity.Type;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public class VacationDaoImpl extends Dao implements VacationDao {
+public class TypeDaoImpl extends Dao implements TypeDao {
 
-    public List<Vacation> getAllVacations() {
+    public List<Type> getAllTypes() {
         getCurrentSession().beginTransaction();
-        List<Vacation> vacations = (List<Vacation>) getCurrentSession().createCriteria(Vacation.class).list();
+        List<Type> types = (List<Type>) getCurrentSession().createCriteria(Type.class).list();
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
 
-        return vacations;
+        return types;
     }
 
-    public Vacation getVacationById(int vacationId) {
+    public Type getTypeById(int typeId) {
         getCurrentSession().beginTransaction();
-        Vacation vacation = getCurrentSession().get(Vacation.class, vacationId);
+        Type type = getCurrentSession().get(Type.class, typeId);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
 
-        return vacation;
+        return type;
     }
 
-    public void addVacation(Vacation vacation) {
+    public void addType(Type type) {
         getCurrentSession().beginTransaction();
-        getCurrentSession().save(vacation);
-        getCurrentSession().getTransaction().commit();
-        getCurrentSession().close();
-    }
-
-    public void updateVacation(Vacation vacation) {
-        getCurrentSession().beginTransaction();
-        getCurrentSession().update(vacation);
+        getCurrentSession().save(type);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
     }
 
-    public void deleteVacation(int vacationId) {
+    public void updateType(Type type) {
         getCurrentSession().beginTransaction();
-        getCurrentSession().delete(getVacationById(vacationId));
+        getCurrentSession().update(type);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
     }
 
-    public boolean isVacationExists(Vacation vacation) {
+    public void deleteType(int typeId) {
         getCurrentSession().beginTransaction();
-        boolean isVacationExists = getCurrentSession().contains(vacation);
+        getCurrentSession().delete(getTypeById(typeId));
+        getCurrentSession().getTransaction().commit();
+        getCurrentSession().close();
+    }
+
+    public boolean isTypeExists(Type type) {
+        getCurrentSession().beginTransaction();
+        boolean isTypeExists = getCurrentSession().contains(type);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
 
-        return isVacationExists;
+        return isTypeExists;
     }
 }

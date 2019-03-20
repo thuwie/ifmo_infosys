@@ -3,12 +3,13 @@ package com.konovalov.edu.dao;
 
 import com.konovalov.edu.entity.Vacation;
 
-import java.util.Date;
 import java.util.List;
 
 public interface VacationDao {
 
-    List<Vacation> getuserById(int userId);
+    List<Vacation> getAllVacations();
+
+    Vacation getVacationById(int vacationId);
 
     void addVacation(Vacation vacation);
 
@@ -16,5 +17,5 @@ public interface VacationDao {
 
     void deleteVacation(int vacationId);
 
-    boolean vacationExists(int userId, int length, Date startDate);
+    boolean isVacationExists(Vacation vacation);
 }
