@@ -1,60 +1,60 @@
 package com.konovalov.edu.dao.impl;
 
 import com.konovalov.edu.dao.Dao;
-import com.konovalov.edu.dao.VacationDao;
-import com.konovalov.edu.entity.Vacation;
+import com.konovalov.edu.dao.EmployeeDao;
+import com.konovalov.edu.entity.Employee;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public class VacationDaoImpl extends Dao implements VacationDao {
+public class EmployeeDaoImpl extends Dao implements EmployeeDao {
 
-    public List<Vacation> getAllVacations() {
+    public List<Employee> getAllEmployees() {
         getCurrentSession().beginTransaction();
-        List<Vacation> vacations = (List<Vacation>) getCurrentSession().createCriteria(Vacation.class).list();
+        List<Employee> employees = (List<Employee>) getCurrentSession().createCriteria(Employee.class).list();
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
 
-        return vacations;
+        return employees;
     }
 
-    public Vacation getVacationById(int vacationId) {
+    public Employee getEmployeeById(int employeeId) {
         getCurrentSession().beginTransaction();
-        Vacation vacation = getCurrentSession().get(Vacation.class, vacationId);
+        Employee employee = getCurrentSession().get(Employee.class, employeeId);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
 
-        return vacation;
+        return employee;
     }
 
-    public void addVacation(Vacation vacation) {
+    public void addEmployee(Employee employee) {
         getCurrentSession().beginTransaction();
-        getCurrentSession().save(vacation);
-        getCurrentSession().getTransaction().commit();
-        getCurrentSession().close();
-    }
-
-    public void updateVacation(Vacation vacation) {
-        getCurrentSession().beginTransaction();
-        getCurrentSession().update(vacation);
+        getCurrentSession().save(employee);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
     }
 
-    public void deleteVacation(int vacationId) {
+    public void updateEmployee(Employee employee) {
         getCurrentSession().beginTransaction();
-        getCurrentSession().delete(getVacationById(vacationId));
+        getCurrentSession().update(employee);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
     }
 
-    public boolean isVacationExists(Vacation vacation) {
+    public void deleteEmployee(int employeeId) {
         getCurrentSession().beginTransaction();
-        boolean isVacationExists = getCurrentSession().contains(vacation);
+        getCurrentSession().delete(getEmployeeById(employeeId));
+        getCurrentSession().getTransaction().commit();
+        getCurrentSession().close();
+    }
+
+    public boolean isEmployeeExists(Employee employee) {
+        getCurrentSession().beginTransaction();
+        boolean isEmployeeExists = getCurrentSession().contains(employee);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
 
-        return isVacationExists;
+        return isEmployeeExists;
     }
 }

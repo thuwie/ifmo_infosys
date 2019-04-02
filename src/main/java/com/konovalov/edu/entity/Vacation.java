@@ -8,24 +8,24 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "vacation")
+@Table(name = "vacations")
 public class Vacation implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vacation_id")
-    private int vacationId;
+    private Integer vacationId;
 
     @Column(name = "user_id")
-    private int roleId;
+    private Integer roleId;
 
     @Column(name = "type_id")
-    private int typeId;
+    private Integer typeId;
 
     @Column(name = "vacation_start")
     private Date vacationStart;
 
     @Column(name = "vacation_days")
-    private int vacationDays;
+    private Integer vacationDays;
 
 }

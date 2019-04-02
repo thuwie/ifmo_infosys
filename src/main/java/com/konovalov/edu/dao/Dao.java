@@ -25,7 +25,7 @@ public class Dao {
     }
 
 
-    private static SessionFactory getSessionFactory() {
+    public static SessionFactory getSessionFactory() {
         return sessionFactory;
     }
 

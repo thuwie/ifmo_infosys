@@ -7,11 +7,10 @@ import java.io.Serializable;
 
 @Data
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User implements Serializable {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Integer userId;
 
@@ -23,11 +22,4 @@ public class User implements Serializable {
 
     @Column(name = "password")
     private String password;
-
-    public User(String username, String password, Integer employeeId) {
-        this.username = username;
-        this.password = password;
-        this.employeeId = employeeId;
-    }
-
 }

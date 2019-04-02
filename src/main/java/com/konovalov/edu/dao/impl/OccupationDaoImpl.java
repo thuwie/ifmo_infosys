@@ -1,60 +1,60 @@
 package com.konovalov.edu.dao.impl;
 
 import com.konovalov.edu.dao.Dao;
-import com.konovalov.edu.dao.VacationDao;
-import com.konovalov.edu.entity.Vacation;
+import com.konovalov.edu.dao.OccupationDao;
+import com.konovalov.edu.entity.Occupation;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public class VacationDaoImpl extends Dao implements VacationDao {
+public class OccupationDaoImpl extends Dao implements OccupationDao {
 
-    public List<Vacation> getAllVacations() {
+    public List<Occupation> getAllOccupations() {
         getCurrentSession().beginTransaction();
-        List<Vacation> vacations = (List<Vacation>) getCurrentSession().createCriteria(Vacation.class).list();
+        List<Occupation> occupations = (List<Occupation>) getCurrentSession().createCriteria(Occupation.class).list();
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
 
-        return vacations;
+        return occupations;
     }
 
-    public Vacation getVacationById(int vacationId) {
+    public Occupation getOccupationById(int occupationId) {
         getCurrentSession().beginTransaction();
-        Vacation vacation = getCurrentSession().get(Vacation.class, vacationId);
+        Occupation occupation = getCurrentSession().get(Occupation.class, occupationId);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
 
-        return vacation;
+        return occupation;
     }
 
-    public void addVacation(Vacation vacation) {
+    public void addOccupation(Occupation occupation) {
         getCurrentSession().beginTransaction();
-        getCurrentSession().save(vacation);
-        getCurrentSession().getTransaction().commit();
-        getCurrentSession().close();
-    }
-
-    public void updateVacation(Vacation vacation) {
-        getCurrentSession().beginTransaction();
-        getCurrentSession().update(vacation);
+        getCurrentSession().save(occupation);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
     }
 
-    public void deleteVacation(int vacationId) {
+    public void updateOccupation(Occupation occupation) {
         getCurrentSession().beginTransaction();
-        getCurrentSession().delete(getVacationById(vacationId));
+        getCurrentSession().update(occupation);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
     }
 
-    public boolean isVacationExists(Vacation vacation) {
+    public void deleteOccupation(int occupationId) {
         getCurrentSession().beginTransaction();
-        boolean isVacationExists = getCurrentSession().contains(vacation);
+        getCurrentSession().delete(getOccupationById(occupationId));
+        getCurrentSession().getTransaction().commit();
+        getCurrentSession().close();
+    }
+
+    public boolean isOccupationExists(Occupation occupation) {
+        getCurrentSession().beginTransaction();
+        boolean isOccupationExists = getCurrentSession().contains(occupation);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
 
-        return isVacationExists;
+        return isOccupationExists;
     }
 }
