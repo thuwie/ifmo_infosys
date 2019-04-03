@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
+  <process id="vac_req_shrink" name="vacation request shrink" isExecutable="true">
+    <startEvent id="start"></startEvent>
+    <userTask id="vac_descision" name="Approve or reject request"></userTask>
+    <sequenceFlow id="sid-73415343-DA07-4554-939B-3BFF6D89E71C" sourceRef="vac_descision" targetRef="status"></sequenceFlow>
+    <serviceTask id="status" name="Set vacation status" flowable:expression="#{vacationService.changeStatus(vacationId, vacationStatus)}"></serviceTask>
+    <userTask id="create_req" name="Request a vacation
+"></userTask>
+    <sequenceFlow id="sid-48EE1781-2EE4-4295-AE53-9B371C3209F9" sourceRef="start" targetRef="create_req"></sequenceFlow>
+    <sequenceFlow id="sid-412365A5-5881-4720-B1A6-D1FE1693A000" sourceRef="create_req" targetRef="vac_descision"></sequenceFlow>
+    <endEvent id="end"></endEvent>
+    <sequenceFlow id="sid-B6FC1595-0EB5-4A35-BCDE-9781512B33D5" sourceRef="status" targetRef="end"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_vac_req_shrink">
+    <bpmndi:BPMNPlane bpmnElement="vac_req_shrink" id="BPMNPlane_vac_req_shrink">
+      <bpmndi:BPMNShape bpmnElement="start" id="BPMNShape_start">
+        <omgdc:Bounds height="30.0" width="30.0" x="60.0" y="130.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="vac_descision" id="BPMNShape_vac_descision">
+        <omgdc:Bounds height="80.0" width="100.0" x="300.0" y="105.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="status" id="BPMNShape_status">
+        <omgdc:Bounds height="78.0" width="117.0" x="470.0" y="106.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="create_req" id="BPMNShape_create_req">
+        <omgdc:Bounds height="80.0" width="100.0" x="131.5" y="105.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+        <omgdc:Bounds height="28.0" width="28.0" x="695.0" y="131.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="sid-73415343-DA07-4554-939B-3BFF6D89E71C" id="BPMNEdge_sid-73415343-DA07-4554-939B-3BFF6D89E71C">
+        <omgdi:waypoint x="399.9499999999609" y="145.0"></omgdi:waypoint>
+        <omgdi:waypoint x="469.9999999999122" y="145.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-412365A5-5881-4720-B1A6-D1FE1693A000" id="BPMNEdge_sid-412365A5-5881-4720-B1A6-D1FE1693A000">
+        <omgdi:waypoint x="231.44999999994948" y="145.0"></omgdi:waypoint>
+        <omgdi:waypoint x="299.9999999999832" y="145.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-B6FC1595-0EB5-4A35-BCDE-9781512B33D5" id="BPMNEdge_sid-B6FC1595-0EB5-4A35-BCDE-9781512B33D5">
+        <omgdi:waypoint x="586.95" y="145.0"></omgdi:waypoint>
+        <omgdi:waypoint x="695.0" y="145.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-48EE1781-2EE4-4295-AE53-9B371C3209F9" id="BPMNEdge_sid-48EE1781-2EE4-4295-AE53-9B371C3209F9">
+        <omgdi:waypoint x="89.94999838912416" y="145.0"></omgdi:waypoint>
+        <omgdi:waypoint x="131.5" y="145.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
