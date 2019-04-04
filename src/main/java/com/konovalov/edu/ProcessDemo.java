@@ -5,15 +5,20 @@ import org.flowable.engine.ProcessEngineConfiguration;
 import org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 
 public class ProcessDemo {
-    private static ProcessDemo processDemoInstance;
-
+    private static volatile ProcessDemo instance;
     private static ProcessEngine processEngine;
 
-    public static synchronized ProcessDemo getInstance() {
-        if (processDemoInstance == null) {
-            processDemoInstance = new ProcessDemo();
+    public static ProcessDemo getInstance() {
+        ProcessDemo local = instance;
+        if (local == null) {
+            synchronized (ProcessDemo.class) {
+                local = instance;
+                if (local == null) {
+                    instance = local = new ProcessDemo();
+                }
+            }
         }
-        return processDemoInstance;
+        return local;
     }
 
     private ProcessDemo() {
