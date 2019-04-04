@@ -20,9 +20,7 @@ public class UserController {
     private final UserDao userDao;
 
     public static boolean isNullOrEmpty(String str) {
-        if(str != null && !str.isEmpty())
-            return false;
-        return true;
+        return (str != null && !str.isEmpty());
     }
 
     @Autowired
