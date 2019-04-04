@@ -1,5 +1,6 @@
 package com.konovalov.edu.rest;
 
+import com.konovalov.edu.ProcessDemo;
 import com.konovalov.edu.dao.UserDao;
 import com.konovalov.edu.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,19 @@ public class UserController {
         this.userDao = userDao;
     }
 
-    // TODO(ipolyakov): add demo task initiator here (POST)
+    @CrossOrigin
+    @PostMapping(value = "/user/initiateVacation")
+    @ResponseBody
+    public ResponseEntity<String> initiateUserVacation() {
+
+        String string = "Demo process initiator";
+        // TODO(ipolyakov): add demo task initiator here
+        ProcessDemo.getInstance();
+
+        return new ResponseEntity<String>(string, HttpStatus.OK);
+
+    }
+
 
     @CrossOrigin
     @GetMapping(value = "/user/get/{userId}")
