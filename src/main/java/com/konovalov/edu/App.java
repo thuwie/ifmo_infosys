@@ -2,28 +2,22 @@ package com.konovalov.edu;
 
 import com.konovalov.edu.dao.Dao;
 import com.konovalov.edu.entity.User;
-import org.hibernate.Session;
+import com.konovalov.edu.ProcessDemo;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+
 
 @SpringBootApplication
-public class App {
+public class App extends SpringBootServletInitializer {
+
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
 
-        Session session = Dao.getSessionFactory().openSession();
+        ProcessDemo.getInstance();
 
-        session.beginTransaction();
-
-        User user = new User();
-        user.setEmployeeId(1);
-        user.setPassword("secret");
-        user.setUsername("banana");
-
-        session.save(user);
-        session.getTransaction().commit();
-
-        session.close();
     }
 }
+
+
