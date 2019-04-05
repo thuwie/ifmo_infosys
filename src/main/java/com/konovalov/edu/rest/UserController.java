@@ -32,9 +32,9 @@ public class UserController {
 
         User user = userDao.getUserById(id);
         if(user != null)
-            return new ResponseEntity<User>(user, HttpStatus.OK);
+            return new ResponseEntity<>(user, HttpStatus.OK);
         else
-            return new ResponseEntity<User>(user, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(user, HttpStatus.NO_CONTENT);
 
     }
 
@@ -45,7 +45,7 @@ public class UserController {
 
         List<User> users = userDao.getAllUsers();
 
-        return new ResponseEntity<List<User>>(users, HttpStatus.OK);
+        return new ResponseEntity<>(users, HttpStatus.OK);
 
     }
 
@@ -56,7 +56,7 @@ public class UserController {
 
         String hello = "std::cout << \"Hallo, Leute!\"";
 
-        return new ResponseEntity<String>(hello, HttpStatus.OK);
+        return new ResponseEntity<>(hello, HttpStatus.OK);
     }
 
     @CrossOrigin
@@ -66,6 +66,23 @@ public class UserController {
 
         User updatedUser = userDao.getUserById(user.getUserId());
 
-        return new ResponseEntity<User>(updatedUser, HttpStatus.OK);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
+    
+    @CrossOrigin
+    @GetMapping(value = "/user/{id}/{username}/{password}/{emID}")
+    @ResponseBody
+    public ResponseEntity<User> addNewUser(@PathVariable("id") Integer id,
+                                           @PathVariable("username") String username,
+                                           @PathVariable("password") String password,
+                                           @PathVariable("emID") Integer emEd) {
+        User user = new User();
+        user.setUserId(id);
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setEmployeeId(emEd);
+        userDao.addUser(user);
+        return null;
+    }
+    
 }
