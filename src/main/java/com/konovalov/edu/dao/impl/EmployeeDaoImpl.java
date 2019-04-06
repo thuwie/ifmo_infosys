@@ -3,6 +3,8 @@ package com.konovalov.edu.dao.impl;
 import com.konovalov.edu.dao.Dao;
 import com.konovalov.edu.dao.EmployeeDao;
 import com.konovalov.edu.entity.Employee;
+import com.konovalov.edu.entity.Role;
+
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -48,7 +50,7 @@ public class EmployeeDaoImpl extends Dao implements EmployeeDao {
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
     }
-
+    
     public boolean isEmployeeExists(Employee employee) {
         getCurrentSession().beginTransaction();
         boolean isEmployeeExists = getCurrentSession().contains(employee);

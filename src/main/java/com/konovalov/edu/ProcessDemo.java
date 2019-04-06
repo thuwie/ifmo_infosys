@@ -27,7 +27,7 @@ public class ProcessDemo {
     private ProcessDemo() {
         // just creates resource table for flowable
         ProcessEngineConfiguration cfg = new StandaloneProcessEngineConfiguration()
-                .setJdbcUrl("jdbc:postgresql://rc1a-2rwkp00qc32pm8t8.mdb.yandexcloud.net:6432/infosys")
+                .setJdbcUrl("jdbc:postgresql://rc1a-vjev09iwfvbz9znn.mdb.yandexcloud.net:6432/db1")
                 .setJdbcUsername("sysuser")
                 .setJdbcPassword("myverypassword")
                 .setJdbcDriver("org.postgresql.Driver")

@@ -5,7 +5,7 @@
 <hibernate-configuration>
     <session-factory>
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQL82Dialect</property>
-        <property name="connection.url">jdbc:postgresql://rc1a-2rwkp00qc32pm8t8.mdb.yandexcloud.net:6432/infosys
+        <property name="connection.url">jdbc:postgresql://rc1a-vjev09iwfvbz9znn.mdb.yandexcloud.net:6432/db1
         </property>
         <property name="hibernate.current_session_context_class">thread</property>
         <property name="connection.driver_class">org.postgresql.Driver</property>

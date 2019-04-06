@@ -2,7 +2,11 @@ package com.konovalov.edu.dao.impl;
 
 import com.konovalov.edu.dao.Dao;
 import com.konovalov.edu.dao.UserDao;
+import com.konovalov.edu.entity.Role;
 import com.konovalov.edu.entity.User;
+
+import org.hibernate.IdentifierLoadAccess;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -47,6 +51,16 @@ public class UserDaoImpl extends Dao implements UserDao {
         getCurrentSession().delete(getUserById(userId));
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
+    }
+    
+    public User getUserByName(String username) {
+        getCurrentSession().beginTransaction();
+        Query query = getCurrentSession().createQuery("from User where username = :name");
+        query.setParameter("name", username);
+        User user = (User) query.getSingleResult();
+        getCurrentSession().getTransaction().commit();
+        getCurrentSession().close();
+        return user;
     }
 
     public boolean isUserExists(User user) {
