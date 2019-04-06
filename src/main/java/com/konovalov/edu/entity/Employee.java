@@ -15,9 +15,6 @@ public class Employee implements Serializable {
     @Column(name = "article_id")
     private Integer articleId;
 
-    @Column(name = "role_id")
-    private Integer roleId;
-
     @Column(name = "occupation_id")
     private Integer occupationId;
 

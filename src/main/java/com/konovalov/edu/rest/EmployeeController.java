@@ -31,7 +31,7 @@ public class EmployeeController {
     public ResponseEntity<Employee> addRole(@PathVariable("empID") Integer empID,
                                             @PathVariable("roleID") Integer roleID) {
         Employee employeeById = employeeDao.getEmployeeById(empID);
-        employeeById.setRoleId(roleID);
+//        employeeById.setRoleId(roleID);
         employeeDao.updateEmployee(employeeById);
         return null;
     }
@@ -53,7 +53,7 @@ public class EmployeeController {
                                                       @PathVariable("secondName") String secondName) {
         Employee employee = new Employee();
         employee.setArticleId(empID);
-        employee.setRoleId(roleID);
+//        employee.setRoleId(roleID);
         employee.setFirstName(firstName);
         employee.setSecondName(secondName);
         employeeDao.addEmployee(employee);

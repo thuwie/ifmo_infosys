@@ -17,6 +17,4 @@ public interface EmployeeDao {
     void deleteEmployee(int employeeId);
 
     boolean isEmployeeExists(Employee employee);
-    
-    int getRoleId(int employeeId);
 }

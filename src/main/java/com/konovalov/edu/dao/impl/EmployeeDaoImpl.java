@@ -51,16 +51,6 @@ public class EmployeeDaoImpl extends Dao implements EmployeeDao {
         getCurrentSession().close();
     }
     
-    public int getRoleId(int employeeId) {
-        getCurrentSession().beginTransaction();
-        Employee employee = getCurrentSession().get(Employee.class, employeeId);
-        getCurrentSession().getTransaction().commit();
-        getCurrentSession().close();
-        
-        return employee.getRoleId();
-    }
-    
-
     public boolean isEmployeeExists(Employee employee) {
         getCurrentSession().beginTransaction();
         boolean isEmployeeExists = getCurrentSession().contains(employee);

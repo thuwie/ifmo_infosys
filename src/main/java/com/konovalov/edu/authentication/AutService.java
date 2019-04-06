@@ -13,7 +13,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.konovalov.edu.dao.EmployeeDao;
 import com.konovalov.edu.dao.RoleDao;
 import com.konovalov.edu.dao.UserDao;
-import com.konovalov.edu.entity.Employee;
 import com.konovalov.edu.entity.Role;
 import com.konovalov.edu.entity.User;
 
@@ -30,20 +29,18 @@ public class AutService {
             .build();
     
     private UserDao userDao;
-    private EmployeeDao employeeDao;
     private RoleDao roleDao;
     
     @Autowired
-    public AutService(UserDao userDao, EmployeeDao employeeDao, RoleDao roleDao) {
+    public AutService(UserDao userDao, RoleDao roleDao) {
         this.userDao = userDao;
-        this.employeeDao = employeeDao;
         this.roleDao = roleDao;
     }
     
     public String auth(String username, String password) throws AuthenticationException {
         User user = userDao.getUserByName(username);
         if (user.getPassword().equals(password)) {
-            int roleId = employeeDao.getRoleId(user.getEmployeeId());
+            int roleId = user.getRoleId();
             Role role = roleDao.getRoleById(roleId);
             return generateJwtToken(user, role);
         }
