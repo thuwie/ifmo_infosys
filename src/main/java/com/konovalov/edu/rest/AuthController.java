@@ -1,24 +1,24 @@
 package com.konovalov.edu.rest;
 
-import java.util.List;
-
 import org.apache.tomcat.websocket.AuthenticationException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.konovalov.edu.authentication.AutService;
-import com.konovalov.edu.entity.Employee;
 
 @RestController
 public class AuthController {
     
     private AutService autService;
+    private final static String USERNAME = "username";
+    private final static String PASSWORD = "password";
     
     @Autowired
     public AuthController(AutService autService) {
@@ -26,10 +26,12 @@ public class AuthController {
     }
     
     @CrossOrigin
-    @GetMapping(value = "/aut/{username}/{password}")
+    @PostMapping(value = "/auth")
     @ResponseBody
-    public ResponseEntity<String> getAllEmployee(@PathVariable("username") String username,
-                                                 @PathVariable("username") String password) {
+    public ResponseEntity<String> getAllEmployee(@RequestBody String userPass) {
+        JSONObject jsonObject = new JSONObject(userPass);
+        String username = (String) jsonObject.get(USERNAME);
+        String password = (String) jsonObject.get(PASSWORD);
         String auth = "";
         try {
             auth = autService.auth(username, password);

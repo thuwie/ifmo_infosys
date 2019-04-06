@@ -26,6 +26,6 @@ public class VacationController {
 
         Vacation vacation = vacationDao.getVacationById(id);
 
-        return new ResponseEntity<Vacation>(vacation, HttpStatus.OK);
+        return new ResponseEntity<>(vacation, HttpStatus.OK);
     }
 }

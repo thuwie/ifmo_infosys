@@ -1,13 +1,20 @@
 package com.konovalov.edu.rest;
 
-import com.konovalov.edu.dao.UserDao;
-import com.konovalov.edu.entity.User;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.konovalov.edu.dao.UserDao;
+import com.konovalov.edu.entity.User;
 
 @RestController
 public class UserController {
@@ -70,19 +77,11 @@ public class UserController {
     }
     
     @CrossOrigin
-    @GetMapping(value = "/user/{id}/{username}/{password}/{emID}")
+    @PostMapping(value = "/user")
     @ResponseBody
-    public ResponseEntity<User> addNewUser(@PathVariable("id") Integer id,
-                                           @PathVariable("username") String username,
-                                           @PathVariable("password") String password,
-                                           @PathVariable("emID") Integer emEd) {
-        User user = new User();
-        user.setUserId(id);
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setEmployeeId(emEd);
+    public ResponseEntity<User> addEmployee(@RequestBody User user) {
         userDao.addUser(user);
-        return null;
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
     
 }

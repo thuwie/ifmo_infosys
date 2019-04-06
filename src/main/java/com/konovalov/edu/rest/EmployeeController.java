@@ -7,13 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.konovalov.edu.dao.EmployeeDao;
 import com.konovalov.edu.entity.Employee;
-import com.konovalov.edu.entity.Role;
 
 @RestController
 public class EmployeeController {
@@ -26,17 +26,6 @@ public class EmployeeController {
     }
     
     @CrossOrigin
-    @GetMapping(value = "/emp/{empID}/{roleID}")
-    @ResponseBody
-    public ResponseEntity<Employee> addRole(@PathVariable("empID") Integer empID,
-                                            @PathVariable("roleID") Integer roleID) {
-        Employee employeeById = employeeDao.getEmployeeById(empID);
-//        employeeById.setRoleId(roleID);
-        employeeDao.updateEmployee(employeeById);
-        return null;
-    }
-    
-    @CrossOrigin
     @GetMapping(value = "/emp/all")
     @ResponseBody
     public ResponseEntity<List<Employee>> getAllEmployee() {
@@ -45,19 +34,10 @@ public class EmployeeController {
     }
     
     @CrossOrigin
-    @GetMapping(value = "/emp/{empID}/{roleID}/{firstName}/{secondName}")
+    @PostMapping(value = "/emp")
     @ResponseBody
-    public ResponseEntity<List<Employee>> addEmployee(@PathVariable("empID") Integer empID,
-                                                      @PathVariable("roleID") Integer roleID,
-                                                      @PathVariable("firstName") String firstName,
-                                                      @PathVariable("secondName") String secondName) {
-        Employee employee = new Employee();
-        employee.setArticleId(empID);
-//        employee.setRoleId(roleID);
-        employee.setFirstName(firstName);
-        employee.setSecondName(secondName);
+    public ResponseEntity<Employee> addEmployee(@RequestBody Employee employee) {
         employeeDao.addEmployee(employee);
-        return null;
+        return new ResponseEntity<>(employee, HttpStatus.OK);
     }
-    
 }
