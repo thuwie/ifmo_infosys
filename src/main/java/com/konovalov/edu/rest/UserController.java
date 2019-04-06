@@ -4,18 +4,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.konovalov.edu.dao.UserDao;
 import com.konovalov.edu.entity.User;
 
+@CrossOrigin
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
     private final UserDao userDao;
@@ -29,8 +25,7 @@ public class UserController {
         this.userDao = userDao;
     }
 
-    @CrossOrigin
-    @GetMapping(value = "/user/get/{userId}")
+    @GetMapping(value = "/get/{userId}")
     @ResponseBody
     public ResponseEntity<User> getUserById(@PathVariable("userId") Integer id) {
 
@@ -42,8 +37,7 @@ public class UserController {
 
     }
 
-    @CrossOrigin
-    @GetMapping(value = "/user/all")
+    @GetMapping(value = "/all")
     @ResponseBody
     public ResponseEntity<List<User>> getUsers() {
 
@@ -53,17 +47,6 @@ public class UserController {
 
     }
 
-    @CrossOrigin
-    @PostMapping(value = "/authenticate")
-    @ResponseBody
-    public ResponseEntity<String> autheticate() {
-
-        String hello = "std::cout << \"Hallo, Leute!\"";
-
-        return new ResponseEntity<>(hello, HttpStatus.OK);
-    }
-
-    @CrossOrigin
     @PostMapping(value = "/updateUser")
     public ResponseEntity<User> updateUser(@RequestBody User user) {
         userDao.updateUser(user);
@@ -72,11 +55,10 @@ public class UserController {
 
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
-    
-    @CrossOrigin
-    @PostMapping(value = "/user")
+
+    @PostMapping(value = "/addUser")
     @ResponseBody
-    public ResponseEntity<User> addEmployee(@RequestBody User user) {
+    public ResponseEntity<User> addUser(@RequestBody User user) {
         userDao.addUser(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }

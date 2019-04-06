@@ -5,12 +5,11 @@ import com.konovalov.edu.entity.Vacation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin
 @RestController
+@RequestMapping("/vacation")
 public class VacationController {
 
     private final VacationDao vacationDao;
@@ -20,7 +19,7 @@ public class VacationController {
         this.vacationDao = vacationDao;
     }
 
-    @GetMapping(value = "/vacation/get/{vacationId}")
+    @GetMapping(value = "/get/{vacationId}")
     @ResponseBody
     public ResponseEntity<Vacation> getVacationById(@PathVariable("vacationId") Integer id) {
 
