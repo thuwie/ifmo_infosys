@@ -1,12 +1,12 @@
 package com.konovalov.edu.rest;
 
-import com.konovalov.edu.entity.User;
-import lombok.extern.log4j.Log4j;
-import org.flowable.engine.RuntimeService;
-import org.flowable.engine.TaskService;
-import org.flowable.engine.impl.persistence.entity.ExecutionEntityImpl;
+import com.konovalov.edu.dao.EmployeeDao;
+import com.konovalov.edu.entity.Employee;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
+import org.json.HTTP;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,71 +17,83 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/processes")
 public class ProcessController {
 
-    @CrossOrigin
+    private EmployeeDao employeeDao;
+    private final static String ID = "employeeId";
+    private final static String REQ_DAYS = "requestedDays";
+
+    @Autowired
+    public ProcessController(EmployeeDao employeeDao) {
+        this.employeeDao = employeeDao;
+    }
+
     @GetMapping(value = "/getTasks")
     @ResponseBody
     public Object getAvailableTasks() {
-
-        String string = "{ \"tasksCount\": ";
-        RuntimeService runtimeService =
-                ProcessDemo.getInstance().processEngine.getRuntimeService();
-
-        TaskService taskService = ProcessDemo.getInstance().processEngine.getTaskService();
-        List<Task> tasks = taskService.createTaskQuery().list();
-        if(tasks.size() > 0) {
-            string += tasks.size() + ", \"tasks\": [";
-            boolean first = true;
-            for (int i = 0; i < tasks.size(); i++) {
-                Task task = tasks.get(i);
-                Map<String, Object> processVariables = taskService.getVariables(task.getId());
-                if (!first)
-                    string += ", ";
-                first = false;
-                string += "{ \"taskId\": " + i + ", \"processName\": \"" + task.getName() + "\", \"ownerName\" :";
-                if(task.getOwner() == null || task.getOwner().length() == 0)
-                    string+= " " + null + " ";
-                else
-                    string += " \"" + task.getOwner() + "\" ";
-                string += ", \"requestedDays\": " + processVariables.get("nrOfHolidays") + ", "
-                        + " \"employeeId\": " + processVariables.get("employee") + "}";
-            }
-            string += "]}";
-
-            return new ResponseEntity<String>(string, HttpStatus.OK);
-        }
-        else{
-            string = HttpStatus.NO_CONTENT + ": No tasks available.";
-            return new ResponseEntity<String>(string, HttpStatus.NO_CONTENT);
-        }
+        String json_response = ProcessDemo.getInstance().buildTasksJson();
+        return new ResponseEntity<String>(json_response, HttpStatus.OK);
     }
 
-    @CrossOrigin
     @PostMapping(value = "/approveUserVacation/{taskId}")
     @ResponseBody
     public Object initiateUserVacation(@PathVariable("taskId") Integer taskId) {
 
         String string;
 
-        TaskService taskService = ProcessDemo.getInstance().processEngine.getTaskService();
-        List<Task> tasks = taskService.createTaskQuery().list();
+        List<Task> tasks = ProcessDemo.getInstance().
+                taskService.
+                createTaskQuery().
+                list();
 
-        if(taskId > tasks.size()) {
+        if (taskId >= tasks.size()) {
             HttpStatus stat = HttpStatus.BAD_REQUEST;
             string = stat + ": unknown task id.";
             return new ResponseEntity<String>(string, stat);
         }
 
         Task task = tasks.get(taskId);
-        taskService.complete(task.getId());
+        ProcessDemo.getInstance().
+                taskService
+                .complete(task.getId());
 
         string = "Task " + taskId + " completed";
 
         return new ResponseEntity<String>(string, HttpStatus.OK);
 
     }
+
+    @PostMapping(value = "/requestVacation")
+    @ResponseBody
+    public ResponseEntity<String> getAvailableProcesses(@RequestBody String employee_requested_data) {
+        JSONObject jsonObject = new JSONObject(employee_requested_data);
+        Integer employee_id = (Integer) jsonObject.get(ID);
+        Integer requested_days = (Integer) jsonObject.get(REQ_DAYS);
+        Employee employee = employeeDao.getEmployeeById(employee_id);
+        if (employee != null) {
+
+            Map<String, Object> variables = new HashMap<String, Object>();
+            variables.put("employee", employee_id);
+            variables.put("nrOfHolidays", requested_days);
+
+            ProcessInstance processInstance = ProcessDemo.getInstance().
+                    runtimeService.
+                    startProcessInstanceByKey("vac_req_shrink", variables);
+
+            String process_id = processInstance.getId();
+
+            return new ResponseEntity<>("Process id " +
+                    process_id + " with name " +
+                    processInstance.getName() +
+                    " created", HttpStatus.OK);
+        }
+        ;
+        String str = "Employee does not exist";
+        return new ResponseEntity<>(str, HttpStatus.OK);
+    }
+
 
 }

@@ -13,6 +13,15 @@ import com.konovalov.edu.entity.User;
 @Repository
 public class UserDaoImpl extends Dao implements UserDao {
 
+    public boolean isUserExists(User user) {
+        getCurrentSession().beginTransaction();
+        boolean isUserExists = getCurrentSession().contains(user);
+        getCurrentSession().getTransaction().commit();
+        getCurrentSession().close();
+
+        return isUserExists;
+    }
+
     public List<User> getAllUsers() {
         getCurrentSession().beginTransaction();
         List<User> users = (List<User>) getCurrentSession().createCriteria(User.class).list();
