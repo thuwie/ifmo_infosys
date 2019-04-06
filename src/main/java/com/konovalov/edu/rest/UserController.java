@@ -30,20 +30,6 @@ public class UserController {
     }
 
     @CrossOrigin
-    @PostMapping(value = "/user/initiateVacation")
-    @ResponseBody
-    public ResponseEntity<String> initiateUserVacation() {
-
-        String string = "Demo process initiator";
-        // TODO(ipolyakov): add demo task initiator here
-        ProcessDemo.getInstance();
-
-        return new ResponseEntity<String>(string, HttpStatus.OK);
-
-    }
-
-
-    @CrossOrigin
     @GetMapping(value = "/user/get/{userId}")
     @ResponseBody
     public ResponseEntity<User> getUserById(@PathVariable("userId") Integer id) {
