@@ -1,15 +1,14 @@
 package com.konovalov.edu.dao.impl;
 
-import com.konovalov.edu.dao.Dao;
-import com.konovalov.edu.dao.UserDao;
-import com.konovalov.edu.entity.Role;
-import com.konovalov.edu.entity.User;
+import java.util.List;
 
-import org.hibernate.IdentifierLoadAccess;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.konovalov.edu.dao.Dao;
+import com.konovalov.edu.dao.UserDao;
+import com.konovalov.edu.entity.Employee;
+import com.konovalov.edu.entity.User;
 
 @Repository
 public class UserDaoImpl extends Dao implements UserDao {
@@ -61,14 +60,5 @@ public class UserDaoImpl extends Dao implements UserDao {
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
         return user;
-    }
-
-    public boolean isUserExists(User user) {
-        getCurrentSession().beginTransaction();
-        boolean isUserExists = getCurrentSession().contains(user);
-        getCurrentSession().getTransaction().commit();
-        getCurrentSession().close();
-
-        return isUserExists;
     }
 }

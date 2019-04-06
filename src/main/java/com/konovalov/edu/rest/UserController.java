@@ -1,40 +1,50 @@
 package com.konovalov.edu.rest;
 
+import java.util.LinkedHashMap;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.konovalov.edu.dao.EmployeeDao;
 import com.konovalov.edu.dao.UserDao;
+import com.konovalov.edu.entity.Employee;
 import com.konovalov.edu.entity.User;
+import lombok.AllArgsConstructor;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/user")
+@AllArgsConstructor
 public class UserController {
 
     private final UserDao userDao;
-
-    public static boolean isNullOrEmpty(String str) {
-        return (str != null && !str.isEmpty());
-    }
-
-    @Autowired
-    public UserController(UserDao userDao) {
-        this.userDao = userDao;
-    }
-
+    private final EmployeeDao employeeDao;
+    
     @GetMapping(value = "/get/{userId}")
     @ResponseBody
-    public ResponseEntity<User> getUserById(@PathVariable("userId") Integer id) {
-
+    public ResponseEntity<Map> getUserById(@PathVariable("userId") Integer id) {
         User user = userDao.getUserById(id);
-        if(user != null)
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        else
-            return new ResponseEntity<>(user, HttpStatus.NO_CONTENT);
-
+        LinkedHashMap<String, Object> jsonStructure = new LinkedHashMap<>();
+        if(user != null) {
+            Employee employee = employeeDao.getEmployeeById(user.getEmployeeId());
+            jsonStructure.put("userId", user.getUserId());
+            jsonStructure.put("username", user.getUsername());
+            jsonStructure.put("roleId", user.getRoleId());
+            jsonStructure.put("employee", employee);
+            return new ResponseEntity<>(jsonStructure, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(jsonStructure, HttpStatus.NO_CONTENT);
+        }
     }
 
     @GetMapping(value = "/all")
