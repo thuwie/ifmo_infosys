@@ -1,7 +1,6 @@
 package com.konovalov.edu.rest;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +29,19 @@ public class UserController {
         this.userDao = userDao;
     }
 
-    // TODO(ipolyakov): add demo task initiator here (POST)
+    @CrossOrigin
+    @PostMapping(value = "/user/initiateVacation")
+    @ResponseBody
+    public ResponseEntity<String> initiateUserVacation() {
+
+        String string = "Demo process initiator";
+        // TODO(ipolyakov): add demo task initiator here
+        ProcessDemo.getInstance();
+
+        return new ResponseEntity<String>(string, HttpStatus.OK);
+
+    }
+
 
     @CrossOrigin
     @GetMapping(value = "/user/get/{userId}")
