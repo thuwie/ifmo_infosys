@@ -1,13 +1,20 @@
 package com.konovalov.edu.rest;
 
-import com.konovalov.edu.dao.UserDao;
-import com.konovalov.edu.entity.User;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.konovalov.edu.dao.UserDao;
+import com.konovalov.edu.entity.User;
 
 @RestController
 public class UserController {
@@ -32,9 +39,9 @@ public class UserController {
 
         User user = userDao.getUserById(id);
         if(user != null)
-            return new ResponseEntity<User>(user, HttpStatus.OK);
+            return new ResponseEntity<>(user, HttpStatus.OK);
         else
-            return new ResponseEntity<User>(user, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(user, HttpStatus.NO_CONTENT);
 
     }
 
@@ -45,7 +52,7 @@ public class UserController {
 
         List<User> users = userDao.getAllUsers();
 
-        return new ResponseEntity<List<User>>(users, HttpStatus.OK);
+        return new ResponseEntity<>(users, HttpStatus.OK);
 
     }
 
@@ -56,7 +63,7 @@ public class UserController {
 
         String hello = "std::cout << \"Hallo, Leute!\"";
 
-        return new ResponseEntity<String>(hello, HttpStatus.OK);
+        return new ResponseEntity<>(hello, HttpStatus.OK);
     }
 
     @CrossOrigin
@@ -66,6 +73,15 @@ public class UserController {
 
         User updatedUser = userDao.getUserById(user.getUserId());
 
-        return new ResponseEntity<User>(updatedUser, HttpStatus.OK);
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
+    
+    @CrossOrigin
+    @PostMapping(value = "/user")
+    @ResponseBody
+    public ResponseEntity<User> addEmployee(@RequestBody User user) {
+        userDao.addUser(user);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+    
 }
