@@ -12,8 +12,8 @@ public class Employee implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "article_id")
-    private Integer articleId;
+    @Column(name = "employee_id")
+    private Integer employeeId;
 
     @Column(name = "occupation_id")
     private Integer occupationId;
