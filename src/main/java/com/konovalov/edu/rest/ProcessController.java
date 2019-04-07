@@ -45,7 +45,7 @@ public class ProcessController {
         String string;
 
         List<Task> tasks = ProcessDemo.getInstance().
-                taskService.
+                getTaskService().
                 createTaskQuery().
                 list();
 
@@ -57,7 +57,7 @@ public class ProcessController {
 
         Task task = tasks.get(taskId);
         ProcessDemo.getInstance().
-                taskService
+                getTaskService()
                 .complete(task.getId());
 
         string = "Task " + taskId + " completed";
@@ -80,7 +80,7 @@ public class ProcessController {
             variables.put("nrOfHolidays", requested_days);
 
             ProcessInstance processInstance = ProcessDemo.getInstance().
-                    runtimeService.
+                    getRuntimeService().
                     startProcessInstanceByKey("vac_req_shrink", variables);
 
             String process_id = processInstance.getId();
