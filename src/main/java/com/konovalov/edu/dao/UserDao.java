@@ -1,6 +1,7 @@
 package com.konovalov.edu.dao;
 
 import com.konovalov.edu.entity.User;
+import com.konovalov.edu.entity.combinedentity.UserEmployee;
 
 import java.util.List;
 
@@ -17,6 +18,10 @@ public interface UserDao {
     void updateUser(User user);
 
     void deleteUser(int userId);
-
-    boolean isUserExists(User user);
+    
+    
+    
+    UserEmployee getUserWithEmpById(Integer id);
+    
+    List<UserEmployee> getAllUsersWithEmpById();
 }
