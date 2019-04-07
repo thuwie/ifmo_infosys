@@ -12,15 +12,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// TODO(ipolyakov): Add TaskService & RuntimeService
-// TODO(ipolyakov): Replace in appropriate place
+// TODO(ipolyakov): Rename
+// TODO(ipolyakov): Make it Statefull (processes/tasks states and events)
 
 public class ProcessDemo {
     private static volatile ProcessDemo instance;
-    public final ProcessEngine processEngine;
 
-    public final RuntimeService runtimeService;
-    public final TaskService taskService;
+    private final ProcessEngine processEngine;
+
+    private final RuntimeService runtimeService;
+    private final TaskService taskService;
+
+    public RuntimeService getRuntimeService() {
+        return runtimeService;
+    }
+
+    public TaskService getTaskService() {
+        return taskService;
+    }
+
+    public ProcessEngine getProcessEngine() {
+        return processEngine;
+    }
 
     public static ProcessDemo getInstance() {
         ProcessDemo local = instance;
@@ -63,16 +76,6 @@ public class ProcessDemo {
         string += "]}";
         return string;
     }
-
-    public static void initUserProcess() {
-    }
-
-    public HashMap<String, Object> getProcessData(Integer processId) {
-        HashMap<String, Object> process_data = new HashMap<String, Object>();
-        List<Event> events = runtimeService.getProcessInstanceEvents("vac_req_shrink");
-        return process_data;
-    }
-
 
     private ProcessDemo() {
         // just creates resource table for flowable
