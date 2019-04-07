@@ -1,11 +1,12 @@
 package com.konovalov.edu.dao.impl;
 
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
 import com.konovalov.edu.dao.Dao;
 import com.konovalov.edu.dao.VacationDao;
 import com.konovalov.edu.entity.Vacation;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public class VacationDaoImpl extends Dao implements VacationDao {
@@ -43,8 +44,9 @@ public class VacationDaoImpl extends Dao implements VacationDao {
     }
 
     public void deleteVacation(int vacationId) {
+        Vacation vacationById = getVacationById(vacationId);
         getCurrentSession().beginTransaction();
-        getCurrentSession().delete(getVacationById(vacationId));
+        getCurrentSession().delete(vacationById);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
     }

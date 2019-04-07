@@ -1,10 +1,16 @@
 package com.konovalov.edu.entity;
 
-import lombok.Data;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import lombok.Data;
 
 @Data
 @Entity
@@ -16,8 +22,8 @@ public class Vacation implements Serializable {
     @Column(name = "vacation_id")
     private Integer vacationId;
 
-    @Column(name = "user_id")
-    private Integer roleId;
+    @Column(name = "employee_id")
+    private Integer employeeId;
 
     @Column(name = "type_id")
     private Integer typeId;
