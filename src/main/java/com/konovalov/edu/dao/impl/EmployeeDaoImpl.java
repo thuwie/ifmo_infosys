@@ -1,13 +1,12 @@
 package com.konovalov.edu.dao.impl;
 
-import com.konovalov.edu.dao.Dao;
-import com.konovalov.edu.dao.EmployeeDao;
-import com.konovalov.edu.entity.Employee;
-import com.konovalov.edu.entity.Role;
+import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.konovalov.edu.dao.Dao;
+import com.konovalov.edu.dao.EmployeeDao;
+import com.konovalov.edu.entity.Employee;
 
 @Repository
 public class EmployeeDaoImpl extends Dao implements EmployeeDao {
@@ -17,7 +16,6 @@ public class EmployeeDaoImpl extends Dao implements EmployeeDao {
         List<Employee> employees = (List<Employee>) getCurrentSession().createCriteria(Employee.class).list();
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
-
         return employees;
     }
 
@@ -26,7 +24,6 @@ public class EmployeeDaoImpl extends Dao implements EmployeeDao {
         Employee employee = getCurrentSession().get(Employee.class, employeeId);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
-
         return employee;
     }
 
@@ -45,8 +42,9 @@ public class EmployeeDaoImpl extends Dao implements EmployeeDao {
     }
 
     public void deleteEmployee(int employeeId) {
+        Employee employeeById = getEmployeeById(employeeId);
         getCurrentSession().beginTransaction();
-        getCurrentSession().delete(getEmployeeById(employeeId));
+        getCurrentSession().delete(employeeById);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
     }
@@ -56,7 +54,6 @@ public class EmployeeDaoImpl extends Dao implements EmployeeDao {
         boolean isEmployeeExists = getCurrentSession().contains(employee);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
-
         return isEmployeeExists;
     }
 }
