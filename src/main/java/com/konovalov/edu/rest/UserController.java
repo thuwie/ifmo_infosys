@@ -56,7 +56,7 @@ public class UserController {
     }
     
     @DeleteMapping("delete/{userId}")
-    public HttpStatus deleteEmployee(@PathVariable("userId") Integer id) {
+    public HttpStatus deleteUser(@PathVariable("userId") Integer id) {
         userDao.deleteUser(id);
         return HttpStatus.OK;
     }
