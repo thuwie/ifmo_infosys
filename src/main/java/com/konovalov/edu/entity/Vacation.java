@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.konovalov.edu.commonTypes.CommonTypes;
 import lombok.Data;
 
 @Data
@@ -34,4 +35,6 @@ public class Vacation implements Serializable {
     @Column(name = "vacation_days")
     private Integer vacationDays;
 
+    @Column(name = "vacation_status")
+    private CommonTypes.requestStatus vacationStatus;
 }
