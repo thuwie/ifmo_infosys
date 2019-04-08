@@ -48,10 +48,13 @@ public class ProcessDemo {
         return local;
     }
 
-    public String buildTasksJson() {
+    public String buildTasksReport() {
 
         String string = "{ \"tasksCount\": ";
         TaskService taskService = processEngine.getTaskService();
+
+        // HistoryService historyService = processEngine.getHistoryService();
+
         List<Task> tasks = taskService.createTaskQuery().list();
         string += tasks.size();
         string += ", \"status\" :" + HttpStatus.OK;
@@ -69,8 +72,10 @@ public class ProcessDemo {
                     string+= " " + null + " ";
                 else
                     string += " \"" + task.getOwner() + "\" ";
-                string += ", \"requestedDays\": " + processVariables.get("nrOfHolidays") + ", "
-                        + " \"employeeId\": " + processVariables.get("employee") + "}";
+                string += ", \"requestedDays\": " + processVariables.get("nrOfHolidays")
+                        + ", \"employeeId\": " + processVariables.get("employee") +
+                ", \"vacationId\": " + processVariables.get("vacationId")
+                        + ", \"requestStatus\": \"" + processVariables.get("vacationStatus") + "\"}";
             }
         }
         string += "]}";

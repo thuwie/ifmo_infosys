@@ -28,7 +28,7 @@ public class AuthController {
     @CrossOrigin
     @PostMapping(value = "/auth")
     @ResponseBody
-    public ResponseEntity<String> getAllEmployee(@RequestBody String userPass) {
+    public ResponseEntity<String> authenticate(@RequestBody String userPass) {
         JSONObject jsonObject = new JSONObject(userPass);
         String username = (String) jsonObject.get(USERNAME);
         String password = (String) jsonObject.get(PASSWORD);
