@@ -2,20 +2,25 @@ package com.konovalov.edu.rest;
 
 import com.konovalov.edu.commonTypes.CommonTypes;
 import com.konovalov.edu.dao.EmployeeDao;
+import com.konovalov.edu.dao.UserDao;
 import com.konovalov.edu.dao.VacationDao;
 import com.konovalov.edu.entity.Employee;
 import com.konovalov.edu.entity.Vacation;
+import com.konovalov.edu.entity.combinedentity.UserEmployee;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
+import org.flowable.task.api.TaskQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.konovalov.edu.processes.ProcessDemo;
+import com.konovalov.edu.processes.ProcessEngineImpl;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,65 +34,79 @@ import java.util.Map;
 @RequestMapping("/processes")
 public class ProcessController {
 
-    public static class approveStruct {
-        private boolean approveStatus;
-
-        approveStruct() {
-        }
-    }
-
     private EmployeeDao employeeDao;
     private VacationDao vacationDao;
+    private UserDao userDao;
+
+    private HttpHeaders responseHeaders;
 
     @Autowired
-    public ProcessController(EmployeeDao employeeDao, VacationDao vacationDao) {
+    public ProcessController(EmployeeDao employeeDao,
+                             VacationDao vacationDao,
+                             UserDao userDao) {
+
         this.employeeDao = employeeDao;
         this.vacationDao = vacationDao;
+        this.userDao = userDao;
+
+        this.responseHeaders = new HttpHeaders();
+        responseHeaders.set("Content-Type", "application/json; charset=UTF-8");
     }
 
-    @GetMapping(value = "/getTasks")
+    // TODO(ipolyakov): add role/user id in request?
+    @GetMapping(value = "/allTasks")
     @ResponseBody
-    public Object getAvailableTasks() {
-        // TODO(ipolyiakov): determinate task id (index) order assignment
-        String json_response = ProcessDemo.getInstance().buildTasksReport();
-        return new ResponseEntity<String>(json_response, HttpStatus.OK);
+    public Object getAllTasks() {
+        HttpStatus responseCode = HttpStatus.OK;
+        List<Task> tasks =
+                ProcessEngineImpl.
+                        getInstance().getOrderedTaskList();
+        String json_response = ProcessEngineImpl.getInstance().buildTasksReport(tasks);
+        if (tasks.isEmpty()) {
+            return new ResponseEntity<String>(json_response, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<String>(json_response, responseHeaders, responseCode);
     }
 
-    //TODO(ipolyakov): ASAP fix only disapprove (09.04.19)
     @PostMapping(value = "/approveUserVacation/{taskId}")
     @ResponseBody
-    public Object approveUserVacation(@PathVariable("taskId") Integer taskId,
-                                      @RequestBody approveStruct approveStruct) {
-
+    public Object approveUserVacation(@PathVariable("taskId") Integer indexTaskId,
+                                      @RequestBody CommonTypes.approveStruct approveStruct) {
         String string;
+        List<Task> tasks = ProcessEngineImpl.getInstance().
+                getOrderedTaskList();
+        HttpStatus stat;
 
-        List<Task> tasks = ProcessDemo.getInstance().
+        if (indexTaskId >= tasks.size()) {
+            stat = HttpStatus.NOT_FOUND;
+            return new ResponseEntity<String>("Task not found", stat);
+        }
+        if (indexTaskId < 0) {
+            stat = HttpStatus.BAD_REQUEST;
+            return new ResponseEntity<String>("Task id MUST BE positive", stat);
+        }
+        Task task = tasks.get(indexTaskId);
+        String taskId = task.getId();
+        Map<String, Object> processVariables = ProcessEngineImpl.getInstance().
                 getTaskService().
-                createTaskQuery().
-                list();
-
-        if (taskId >= tasks.size()) {
-            HttpStatus stat = HttpStatus.BAD_REQUEST;
-            string = "{ \"message\": \"unknown task id\"}";
-            return new ResponseEntity<String>(string, stat);
+                getVariables(taskId);
+        boolean waitState =
+                processVariables.get("vacationStatus") ==
+                        CommonTypes.requestStatus.WAIT;
+        if (!waitState) {
+            stat = HttpStatus.BAD_REQUEST;
+            return new ResponseEntity<String>("", stat);
         }
 
-        Task task = tasks.get(taskId);
-        String strTaskId = task.getId();
-
-        Map<String, Object> processVariables = ProcessDemo.getInstance().
-                getTaskService().
-                getVariables(strTaskId);
-
         CommonTypes.requestStatus completeStatus;
-        Vacation vacation = vacationDao.getVacationById((int)processVariables.get("vacationId"));
+        Vacation vacation = vacationDao.getVacationById((int) processVariables.get("vacationId"));
         completeStatus = (approveStruct.approveStatus) ?
                 CommonTypes.requestStatus.APPROVED :
                 CommonTypes.requestStatus.DISAPPROVED;
         vacation.setVacationStatus(completeStatus);
         vacationDao.updateVacation(vacation);
 
-        if(completeStatus == CommonTypes.requestStatus.APPROVED) {
+        if (completeStatus == CommonTypes.requestStatus.APPROVED) {
             // фантастическая хуета
             Employee currentEmployee = employeeDao.getEmployeeById(vacation.getEmployeeId());
             int oldCharge = currentEmployee.getVacationDays();
@@ -96,27 +115,34 @@ public class ProcessController {
             employeeDao.updateEmployee(currentEmployee);
         }
 
-        processVariables.replace("vacationStatus", completeStatus.name());
+        processVariables.replace("vacationStatus", completeStatus);
+        processVariables.replace("prevStateAssignedManagerId", task.getAssignee());
+        processVariables.replace("prevStateAssignedManagerName", processVariables.get("managerName"));
+        processVariables.replace("managerName", "");
 
-        ProcessDemo.getInstance()
+        ProcessEngineImpl.getInstance()
                 .getTaskService()
-                .complete(strTaskId, processVariables);
+                .complete(taskId, processVariables);
 
-        string = "{ \"message\": \"Task " + taskId + " completed with status " + completeStatus.name() + "\"}";
-
-        return new ResponseEntity<String>(string, HttpStatus.OK);
-
+        return new ResponseEntity<String>("", responseHeaders, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/requestVacation")
+    @PostMapping(value = "/vacationProcess")
     @ResponseBody
     public ResponseEntity<String> requestVacation(@RequestBody Vacation vacation) {
+        if (vacation.getEmployeeId() == null ||
+                vacation.getTypeId() == null ||
+                vacation.getVacationStart() == null ||
+                vacation.getVacationDays() == null)
+            return new ResponseEntity<>(
+                    "One or more required fields missing",
+                    HttpStatus.BAD_REQUEST);
+
         Employee fake_cache_employee =
                 employeeDao.
                         getEmployeeById(vacation.getEmployeeId());
-
         int requestedDays = vacation.getVacationDays();
-        if (fake_cache_employee != null)
+        if (fake_cache_employee != null) {
             // check if vacation start date >= current time
             // may be cast to UTC time
             if (requestedDays <= fake_cache_employee.getVacationDays() && requestedDays > 0) {
@@ -126,32 +152,69 @@ public class ProcessController {
                 vacation.setVacationStatus(currentStatus);
 
                 // if dangerous id received
-                if(vacation.getVacationId() != null)
-                    vacation.setVacationId(null);
+                if (vacation.getVacationId() != null)
+                    return new ResponseEntity<>(
+                            "Unexpected id received",
+                            HttpStatus.BAD_REQUEST);
 
                 vacationDao.addVacation(vacation);
+
+                // fancy and huge manager assignment election
+                // obviously there are implementation in flowabale API
+                // but who cares?
+                List<UserEmployee> availableUsers = userDao.getAllUsersWithEmpById();
+                Integer managerId = null;
+                String managerName = null;
+                String currentManagerName = null;
+                TaskQuery query = ProcessEngineImpl.getInstance()
+                        .getTaskService()
+                        .createTaskQuery();
+                int minQueueSize = Integer.MAX_VALUE;
+                for (UserEmployee user : availableUsers) {
+                    if (user.getRoleName().equals(CommonTypes.userRole.ADMIN.getName())) {
+                        if (query.taskAssignee(user.getUserId().toString()) != null) {
+                            if (query.taskAssignee(user.getUserId().toString()).list().size() < minQueueSize) {
+                                managerId = user.getUserId();
+                                managerName = user.getFirstName() + " " + user.getSecondName();
+                                continue;
+                            }
+                        }
+                        managerId = user.getUserId();
+                        managerName = user.getFirstName() + " " + user.getSecondName();
+                    }
+                }
 
                 // map data to process engine reference information
                 Map<String, Object> variables = new HashMap<String, Object>();
                 variables.put("employee", vacation.getEmployeeId());
                 variables.put("nrOfHolidays", vacation.getVacationDays());
                 variables.put("vacationId", vacation.getVacationId());
-                variables.put("vacationStatus", currentStatus.name());
+                variables.put("vacationStatus", currentStatus);
                 variables.put("vacationStartDate", vacation.getVacationStart());
                 variables.put("vacationTypeId", vacation.getTypeId());
+                variables.put("managerName", managerName);
+                variables.put("prevStateAssignedManagerName", "");
+                variables.put("prevStateAssignedManagerId", null);
 
-                ProcessInstance processInstance = ProcessDemo.getInstance().
+                ProcessInstance processInstance = ProcessEngineImpl.getInstance().
                         getRuntimeService().
                         startProcessInstanceByKey("vac_req_shrink", variables);
 
-                String process_id = processInstance.getId();
-                return new ResponseEntity<>("{ \"message\": \"vacation initiated: process id " +
-                        process_id +
-                        " created \"}", HttpStatus.OK);
-            }
+                Task task = ProcessEngineImpl.getInstance()
+                        .getTaskService()
+                        .createTaskQuery()
+                        .processInstanceId(processInstance.getId()).singleResult();
 
-        String str = "{\"message\": \"employee" + vacation.getEmployeeId() + " does not exist\"}";
-        return new ResponseEntity<>(str, HttpStatus.OK);
+                // fancy owner setter
+                if (managerId != null)
+                    ProcessEngineImpl.getInstance().getTaskService().setAssignee(task.getId(), managerId.toString());
+                ProcessEngineImpl.getInstance().getTaskService().setOwner(task.getId(), vacation.getEmployeeId().toString());
+
+                return new ResponseEntity<>("", responseHeaders, HttpStatus.CREATED);
+            } else
+                return new ResponseEntity<>("Incorrect vacation days value", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("Employee not found", HttpStatus.NOT_FOUND);
     }
 
     // USE CAREFULLY!
@@ -160,18 +223,17 @@ public class ProcessController {
     @ResponseBody
     public ResponseEntity<String> deleteAllTasks() {
         String str;
-        List<Task> tasks = ProcessDemo.getInstance().getTaskService().createTaskQuery().list();
-        if(tasks.size() > 0) {
-            str = "{ \"message\" :" + tasks.size() + "\" tasks deleted\"}";
-            RuntimeService runtimeService = ProcessDemo.getInstance().getRuntimeService();
-            TaskService taskService = ProcessDemo.getInstance().getTaskService();
+        List<Task> tasks = ProcessEngineImpl.getInstance().getTaskService().createTaskQuery().list();
+        if (tasks.size() > 0) {
+            str = "{ \"message\":\"" + tasks.size() + " tasks deleted\"}";
+            RuntimeService runtimeService = ProcessEngineImpl.getInstance().getRuntimeService();
+            TaskService taskService = ProcessEngineImpl.getInstance().getTaskService();
 
             for (Task task : tasks) {
                 runtimeService.deleteProcessInstance(task.getProcessInstanceId(), " ");
                 taskService.deleteTask(task.getId(), true);
             }
-        }
-        else {
+        } else {
             str = "{ \"message\" : \"tasks queue is empty\"}";
         }
 

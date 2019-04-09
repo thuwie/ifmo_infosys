@@ -4,19 +4,17 @@ import org.flowable.engine.*;
 import org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.ProcessDefinition;
-import org.flowable.engine.task.Event;
 import org.flowable.task.api.Task;
 import org.springframework.http.HttpStatus;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 // TODO(ipolyakov): Rename
 // TODO(ipolyakov): Make it Statefull (processes/tasks states and events)
 
-public class ProcessDemo {
-    private static volatile ProcessDemo instance;
+public class ProcessEngineImpl {
+    private static volatile ProcessEngineImpl instance;
 
     private final ProcessEngine processEngine;
 
@@ -35,54 +33,59 @@ public class ProcessDemo {
         return processEngine;
     }
 
-    public static ProcessDemo getInstance() {
-        ProcessDemo local = instance;
+    public static ProcessEngineImpl getInstance() {
+        ProcessEngineImpl local = instance;
         if (local == null) {
-            synchronized (ProcessDemo.class) {
+            synchronized (ProcessEngineImpl.class) {
                 local = instance;
                 if (local == null) {
-                    instance = local = new ProcessDemo();
+                    instance = local = new ProcessEngineImpl();
                 }
             }
         }
         return local;
     }
 
-    public String buildTasksReport() {
+    public List<Task> getOrderedTaskList() {
+        return taskService.
+                createTaskQuery().
+                orderByProcessInstanceId().asc().list();
+    }
 
-        String string = "{ \"tasksCount\": ";
+    public String buildTasksReport(List<Task> tasks /*int authEmployeeId*/) {
+
+        String string = "[";
         TaskService taskService = processEngine.getTaskService();
 
-        // HistoryService historyService = processEngine.getHistoryService();
-
-        List<Task> tasks = taskService.createTaskQuery().list();
-        string += tasks.size();
-        string += ", \"status\" :" + HttpStatus.OK;
-        string += ", \"tasks\": [";
-        if(tasks.size() > 0) {
+        if (tasks.size() > 0) {
             boolean first = true;
-            for (int i = 0; i < tasks.size(); i++) {
-                Task task = tasks.get(i);
+            for (int k = 0; k < tasks.size(); ++k) {
+                Task task = tasks.get(k);
                 Map<String, Object> processVariables = taskService.getVariables(task.getId());
+                Integer employeeId = Integer.valueOf(processVariables.get("employee").toString());
+
                 if (!first)
                     string += ", ";
                 first = false;
-                string += "{ \"taskId\": " + i + ", \"processName\": \"" + task.getName() + "\", \"ownerName\" :";
-                if(task.getOwner() == null || task.getOwner().length() == 0)
-                    string+= " " + null + " ";
-                else
-                    string += " \"" + task.getOwner() + "\" ";
-                string += ", \"requestedDays\": " + processVariables.get("nrOfHolidays")
-                        + ", \"employeeId\": " + processVariables.get("employee") +
-                ", \"vacationId\": " + processVariables.get("vacationId")
-                        + ", \"requestStatus\": \"" + processVariables.get("vacationStatus") + "\"}";
+                string += "{\"taskId\": " + k + ", \"processStateDefinition\":\"" + task.getName()
+                        + "\", \"ownerId\":" + task.getOwner();
+                string += ", \"requestedDays\":" + processVariables.get("nrOfHolidays")
+                        + ", \"employeeId\":" + employeeId +
+                        ", \"vacationId\":" + processVariables.get("vacationId")
+                        + ", \"requestStatus\":\"" + processVariables.get("vacationStatus").toString() +
+                        "\", \"processInstanceId\":" + task.getProcessInstanceId() +
+                        ", \"assignedManagerId\":" + task.getAssignee() +
+                        ", \"assignedManagerName\":\"" + processVariables.get("managerName") + "\"" +
+                        ", \"lastStateManagerId\":" + processVariables.get("prevStateAssignedManagerId") +
+                        ", \"lastStateManagerName\":\"" + processVariables.get("prevStateAssignedManagerName")
+                        + "\"}";
             }
         }
-        string += "]}";
+        string += "]";
         return string;
     }
 
-    private ProcessDemo() {
+    private ProcessEngineImpl() {
         // just creates resource table for flowable
         ProcessEngineConfiguration cfg = new StandaloneProcessEngineConfiguration()
                 .setJdbcUrl("jdbc:postgresql://rc1a-vjev09iwfvbz9znn.mdb.yandexcloud.net:6432/db1")

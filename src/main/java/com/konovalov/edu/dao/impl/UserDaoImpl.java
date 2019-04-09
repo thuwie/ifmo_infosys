@@ -76,7 +76,7 @@ public class UserDaoImpl extends Dao implements UserDao {
            "select new com.konovalov.edu.entity.combinedentity.UserEmployee(u.userId, u.username, u.password," +
                       " r.name, e.employeeId, e.firstName, e.secondName) " +
                       "from Role r inner join User u on r.roleId = u.roleId " +
-                      "inner join Employee e on u.employeeId= e.employeeId " +
+                      "inner join Employee e on u.employeeId = e.employeeId " +
                       "where u.userId = :id").setParameter("id", id).getSingleResult();
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
@@ -90,7 +90,7 @@ public class UserDaoImpl extends Dao implements UserDao {
                 "select new com.konovalov.edu.entity.combinedentity.UserEmployee(u.userId, u.username, u.password," +
                            " r.name, e.employeeId, e.firstName, e.secondName) " +
                            "from Role r inner join User u on r.roleId = u.roleId " +
-                           "inner join Employee e on u.employeeId= e.employeeId").list();
+                           "inner join Employee e on u.employeeId = e.employeeId").list();
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
         return userEmployees;
