@@ -18,9 +18,7 @@ public interface UserDao {
     void updateUser(User user);
 
     void deleteUser(int userId);
-    
-    
-    
+
     UserEmployee getUserWithEmpById(Integer id);
     
     List<UserEmployee> getAllUsersWithEmpById();

@@ -49,8 +49,8 @@ public class UserController {
     public ResponseEntity<User> addUser(@RequestBody String userJson) {
         JSONObject jsonObject = new JSONObject(userJson);
         User user = new User();
-        String employeeId = (String) jsonObject.get("employeeId");
-        user.setEmployeeId(Integer.parseInt(employeeId));
+        Integer employeeId = (Integer) jsonObject.get("employeeId");
+        user.setEmployeeId(employeeId);
         Integer roleId = roleDao.getRoleIdByName((String) jsonObject.get("roleName"));
         user.setRoleId(roleId);
         String username = (String) jsonObject.get("username");
