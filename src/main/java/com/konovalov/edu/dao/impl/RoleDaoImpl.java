@@ -1,14 +1,23 @@
 package com.konovalov.edu.dao.impl;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Repository;
+
 import com.konovalov.edu.dao.Dao;
 import com.konovalov.edu.dao.RoleDao;
 import com.konovalov.edu.entity.Role;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public class RoleDaoImpl extends Dao implements RoleDao {
+    
+    public final Map<String, Integer> ROLE_CASH = getAllRoles().stream()
+                                                            .collect(Collectors.toMap(
+                                                                    Role::getName,
+                                                                    Role::getRoleId
+                                                            ));
 
     public List<Role> getAllRoles() {
         getCurrentSession().beginTransaction();
@@ -54,7 +63,10 @@ public class RoleDaoImpl extends Dao implements RoleDao {
         boolean isRoleExists = getCurrentSession().contains(role);
         getCurrentSession().getTransaction().commit();
         getCurrentSession().close();
-
         return isRoleExists;
+    }
+    
+    public Integer getRoleIdByName(String name) {
+        return ROLE_CASH.get(name);
     }
 }

@@ -1,8 +1,8 @@
 package com.konovalov.edu.dao;
 
-import com.konovalov.edu.entity.Role;
-
 import java.util.List;
+
+import com.konovalov.edu.entity.Role;
 
 public interface RoleDao {
 
@@ -17,4 +17,6 @@ public interface RoleDao {
     void deleteRole(int roleId);
 
     boolean isRoleExists(Role role);
+    
+    Integer getRoleIdByName(String name);
 }
