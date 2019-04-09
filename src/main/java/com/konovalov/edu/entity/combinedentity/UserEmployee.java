@@ -10,6 +10,7 @@ public class UserEmployee {
     private String username;
     private String password;
     private String roleName;
+    private Integer employeeId;
     private String firstName;
     private String secondName;
 }

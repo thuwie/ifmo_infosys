@@ -74,7 +74,7 @@ public class UserDaoImpl extends Dao implements UserDao {
         getCurrentSession().beginTransaction();
         UserEmployee userEmployee = (UserEmployee) getCurrentSession().createQuery(
            "select new com.konovalov.edu.entity.combinedentity.UserEmployee(u.userId, u.username, u.password," +
-                      " r.name, e.firstName, e.secondName) " +
+                      " r.name, e.employeeId, e.firstName, e.secondName) " +
                       "from Role r inner join User u on r.roleId = u.roleId " +
                       "inner join Employee e on u.employeeId= e.employeeId " +
                       "where u.userId = :id").setParameter("id", id).getSingleResult();
@@ -88,7 +88,7 @@ public class UserDaoImpl extends Dao implements UserDao {
         @SuppressWarnings("unchecked")
         List<UserEmployee> userEmployees = getCurrentSession().createQuery(
                 "select new com.konovalov.edu.entity.combinedentity.UserEmployee(u.userId, u.username, u.password," +
-                           " r.name, e.firstName, e.secondName) " +
+                           " r.name, e.employeeId, e.firstName, e.secondName) " +
                            "from Role r inner join User u on r.roleId = u.roleId " +
                            "inner join Employee e on u.employeeId= e.employeeId").list();
         getCurrentSession().getTransaction().commit();
