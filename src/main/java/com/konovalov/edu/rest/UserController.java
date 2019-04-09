@@ -2,6 +2,7 @@ package com.konovalov.edu.rest;
 
 import java.util.List;
 
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.konovalov.edu.dao.RoleDao;
 import com.konovalov.edu.dao.UserDao;
 import com.konovalov.edu.entity.User;
 import com.konovalov.edu.entity.combinedentity.UserEmployee;
@@ -26,6 +28,7 @@ import lombok.AllArgsConstructor;
 public class UserController {
 
     private final UserDao userDao;
+    private final RoleDao roleDao;
     
     @GetMapping(value = "/get/{userId}")
     @ResponseBody
@@ -43,7 +46,17 @@ public class UserController {
 
     @PostMapping(value = "/addUser")
     @ResponseBody
-    public ResponseEntity<User> addUser(@RequestBody User user) {
+    public ResponseEntity<User> addUser(@RequestBody String userJson) {
+        JSONObject jsonObject = new JSONObject(userJson);
+        User user = new User();
+        String employeeId = (String) jsonObject.get("employeeId");
+        user.setEmployeeId(Integer.parseInt(employeeId));
+        Integer roleId = roleDao.getRoleIdByName((String) jsonObject.get("roleName"));
+        user.setRoleId(roleId);
+        String username = (String) jsonObject.get("username");
+        user.setUsername(username);
+        String password = (String) jsonObject.get("password");
+        user.setPassword(password);
         userDao.addUser(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
