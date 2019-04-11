@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import com.konovalov.edu.processes.ProcessEngineImpl;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,81 +141,93 @@ public class ProcessController {
                 employeeDao.
                         getEmployeeById(vacation.getEmployeeId());
         int requestedDays = vacation.getVacationDays();
+        Date startDate = vacation.getVacationStart();
+        String errorMessage = "";
+        Date currentDate = new Date();
         if (fake_cache_employee != null) {
+            errorMessage = "Employee not found";
             // check if vacation start date >= current time
             // may be cast to UTC time
-            if (requestedDays <= fake_cache_employee.getVacationDays() && requestedDays > 0) {
+            if (startDate.compareTo(currentDate) <= 0)
+                if (requestedDays <= fake_cache_employee.getVacationDays() && requestedDays > 0) {
+                    errorMessage = "Incorrect vacation days value";
 
-                // current vacation status
-                CommonTypes.requestStatus currentStatus = CommonTypes.requestStatus.WAIT;
-                vacation.setVacationStatus(currentStatus);
+                    // current vacation status
+                    CommonTypes.requestStatus currentStatus = CommonTypes.requestStatus.WAIT;
+                    vacation.setVacationStatus(currentStatus);
 
-                // if dangerous id received
-                if (vacation.getVacationId() != null)
-                    return new ResponseEntity<>(
-                            "Unexpected id received",
-                            HttpStatus.BAD_REQUEST);
+                    // if dangerous id received
+                    if (vacation.getVacationId() != null)
+                        return new ResponseEntity<>(
+                                "Unexpected id received",
+                                HttpStatus.BAD_REQUEST);
 
-                vacationDao.addVacation(vacation);
+                    vacationDao.addVacation(vacation);
 
-                // fancy and huge manager assignment election
-                // obviously there are implementation in flowabale API
-                // but who cares?
-                List<UserEmployee> availableUsers = userDao.getAllUsersWithEmpById();
-                Integer managerId = null;
-                String managerName = null;
-                String currentManagerName = null;
-                TaskQuery query = ProcessEngineImpl.getInstance()
-                        .getTaskService()
-                        .createTaskQuery();
-                int minQueueSize = Integer.MAX_VALUE;
-                for (UserEmployee user : availableUsers) {
-                    if (user.getRoleName().equals(CommonTypes.userRole.MANAGER.getName())) {
-                        if (query.taskAssignee(user.getUserId().toString()) != null) {
-                            int currenstSize = query.taskAssignee(user.getUserId().toString()).list().size();
-                            if (currenstSize < minQueueSize) {
-                                minQueueSize = currenstSize;
+                    // fancy and huge manager assignment election
+                    // obviously there are implementation in flowabale API
+                    // but who cares?
+                    List<UserEmployee> availableUsers = userDao.getAllUsersWithEmpById();
+                    Integer managerId = null;
+                    String managerName = null;
+                    String currentManagerName = null;
+                    TaskQuery query = ProcessEngineImpl.getInstance()
+                            .getTaskService()
+                            .createTaskQuery();
+                    int minQueueSize = Integer.MAX_VALUE;
+                    for (UserEmployee user : availableUsers) {
+                        if (user.getRoleName().equals(CommonTypes.userRole.MANAGER.getName())) {
+                            if (query.taskAssignee(user.getUserId().toString()) != null) {
+                                int currenstSize = query.taskAssignee(user.getUserId().toString()).list().size();
+                                if (currenstSize < minQueueSize) {
+                                    minQueueSize = currenstSize;
+                                    managerId = user.getUserId();
+                                    managerName = user.getFirstName() + " " + user.getSecondName();
+                                    continue;
+                                }
+                            } else {
                                 managerId = user.getUserId();
                                 managerName = user.getFirstName() + " " + user.getSecondName();
-                                continue;
                             }
                         }
-                        managerId = user.getUserId();
-                        managerName = user.getFirstName() + " " + user.getSecondName();
                     }
-                }
 
-                // map data to process engine reference information
-                Map<String, Object> variables = new HashMap<String, Object>();
-                variables.put("employee", vacation.getEmployeeId());
-                variables.put("nrOfHolidays", vacation.getVacationDays());
-                variables.put("vacationId", vacation.getVacationId());
-                variables.put("vacationStatus", currentStatus);
-                variables.put("vacationStartDate", vacation.getVacationStart());
-                variables.put("vacationTypeId", vacation.getTypeId());
-                variables.put("managerName", managerName);
-                variables.put("prevStateAssignedManagerName", "");
-                variables.put("prevStateAssignedManagerId", null);
+                    // map data to process engine reference information
+                    long millisecondsSinceEpoch = vacation.getVacationStart().getTime();
+                    Map<String, Object> variables = new HashMap<String, Object>();
+                    variables.put("employee", vacation.getEmployeeId());
+                    variables.put("nrOfHolidays", vacation.getVacationDays());
+                    variables.put("startDate", millisecondsSinceEpoch);
+                    variables.put("vacationId", vacation.getVacationId());
+                    variables.put("vacationStatus", currentStatus);
+                    variables.put("vacationTypeId", vacation.getTypeId());
+                    variables.put("managerName", managerName);
+                    variables.put("prevStateAssignedManagerName", "");
+                    variables.put("prevStateAssignedManagerId", null);
 
-                ProcessInstance processInstance = ProcessEngineImpl.getInstance().
-                        getRuntimeService().
-                        startProcessInstanceByKey("vac_req_shrink", variables);
+                    ProcessInstance processInstance = ProcessEngineImpl.getInstance().
+                            getRuntimeService().
+                            startProcessInstanceByKey("vac_req_shrink", variables);
 
-                Task task = ProcessEngineImpl.getInstance()
-                        .getTaskService()
-                        .createTaskQuery()
-                        .processInstanceId(processInstance.getId()).singleResult();
+                    Task task = ProcessEngineImpl.getInstance()
+                            .getTaskService()
+                            .createTaskQuery()
+                            .processInstanceId(processInstance.getId()).singleResult();
 
-                // fancy owner setter
-                if (managerId != null)
-                    ProcessEngineImpl.getInstance().getTaskService().setAssignee(task.getId(), managerId.toString());
-                ProcessEngineImpl.getInstance().getTaskService().setOwner(task.getId(), vacation.getEmployeeId().toString());
+                    // fancy owner setter
+                    if (managerId != null)
+                        ProcessEngineImpl.getInstance().getTaskService().setAssignee(task.getId(), managerId.toString());
+                    ProcessEngineImpl.getInstance().getTaskService().setOwner(task.getId(), vacation.getEmployeeId().toString());
 
-                return new ResponseEntity<>("", responseHeaders, HttpStatus.CREATED);
-            } else
-                return new ResponseEntity<>("Incorrect vacation days value", HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>("", responseHeaders, HttpStatus.CREATED);
+                } else
+                    return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+            else {
+                errorMessage = "Vacation date MUST BE in future";
+                return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+            }
         }
-        return new ResponseEntity<>("Employee not found", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
 
     // USE CAREFULLY!

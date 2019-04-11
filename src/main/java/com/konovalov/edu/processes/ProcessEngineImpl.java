@@ -69,6 +69,7 @@ public class ProcessEngineImpl {
                 string += "{\"taskId\": " + k + ", \"processStateDefinition\":\"" + task.getName()
                         + "\", \"ownerId\":" + task.getOwner();
                 string += ", \"requestedDays\":" + processVariables.get("nrOfHolidays")
+                        + ", \"vacationStartDate\":" + processVariables.get("startDate")
                         + ", \"employeeId\":" + employeeId +
                         ", \"vacationId\":" + processVariables.get("vacationId")
                         + ", \"requestStatus\":\"" + processVariables.get("vacationStatus").toString() +
