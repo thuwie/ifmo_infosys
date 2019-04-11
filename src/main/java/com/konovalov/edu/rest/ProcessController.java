@@ -145,12 +145,10 @@ public class ProcessController {
         String errorMessage = "";
         Date currentDate = new Date();
         if (fake_cache_employee != null) {
-            errorMessage = "Employee not found";
             // check if vacation start date >= current time
             // may be cast to UTC time
-            if (startDate.compareTo(currentDate) <= 0)
+            if (startDate.compareTo(currentDate) >= 0)
                 if (requestedDays <= fake_cache_employee.getVacationDays() && requestedDays > 0) {
-                    errorMessage = "Incorrect vacation days value";
 
                     // current vacation status
                     CommonTypes.requestStatus currentStatus = CommonTypes.requestStatus.WAIT;
@@ -220,13 +218,16 @@ public class ProcessController {
                     ProcessEngineImpl.getInstance().getTaskService().setOwner(task.getId(), vacation.getEmployeeId().toString());
 
                     return new ResponseEntity<>("", responseHeaders, HttpStatus.CREATED);
-                } else
+                } else {
+                    errorMessage = "Incorrect vacation days value";
                     return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+                }
             else {
                 errorMessage = "Vacation date MUST BE in future";
                 return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
             }
         }
+        errorMessage = "Employee not found";
         return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
 
