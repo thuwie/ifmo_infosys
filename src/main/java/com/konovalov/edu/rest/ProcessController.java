@@ -25,9 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//TODO(ipolyakov): assign owner
-//TODO(ipolyakov): assing to manager
-//TODO(ipolyakov): may be assign to group (process engine reference)
+// TODO(ipolyakov): may be assign to group (process engine reference)
 
 @CrossOrigin
 @RestController
@@ -171,9 +169,11 @@ public class ProcessController {
                         .createTaskQuery();
                 int minQueueSize = Integer.MAX_VALUE;
                 for (UserEmployee user : availableUsers) {
-                    if (user.getRoleName().equals(CommonTypes.userRole.ADMIN.getName())) {
+                    if (user.getRoleName().equals(CommonTypes.userRole.MANAGER.getName())) {
                         if (query.taskAssignee(user.getUserId().toString()) != null) {
-                            if (query.taskAssignee(user.getUserId().toString()).list().size() < minQueueSize) {
+                            int currenstSize = query.taskAssignee(user.getUserId().toString()).list().size();
+                            if (currenstSize < minQueueSize) {
+                                minQueueSize = currenstSize;
                                 managerId = user.getUserId();
                                 managerName = user.getFirstName() + " " + user.getSecondName();
                                 continue;
