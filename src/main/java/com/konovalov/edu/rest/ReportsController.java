@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/processes/")
 public class ReportsController {
@@ -24,6 +25,8 @@ public class ReportsController {
 
         this.responseHeaders = new HttpHeaders();
         responseHeaders.set("Content-Type", "application/pdf");
+        responseHeaders.set("X-Suggested-Filename", "report.pdf");
+        responseHeaders.set("Content-Disposition", "attachment; filename=report.pdf");
     }
 
     @GetMapping(value = "/report/get/{taskId}")

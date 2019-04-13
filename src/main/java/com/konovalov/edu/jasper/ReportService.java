@@ -19,17 +19,17 @@ import java.util.Map;
 @Service
 public class ReportService {
 
-//    @Autowired
-//    public ReportService() {
-//        try {
-//            JasperCompileManager.compileReportToFile("process_jasper_report.jrxml",
-//                    "process_report.jasper");
-//        }
-//        catch (JRException e)
-//        {
-//            System.out.println(e.getStackTrace());
-//        }
-//    }
+    @Autowired
+    public ReportService() {
+        try {
+            JasperCompileManager.compileReportToFile("C://Projects/ifmo/ifmo_infosys/src/main/resources/process_jasper_report.jrxml",
+                    "C://Projects/ifmo/ifmo_infosys/src/main/resources/process_report.jasper");
+        }
+        catch (JRException e)
+        {
+            System.out.println(e.getStackTrace());
+        }
+    }
 
     public ByteArrayResource generateSimpleReport(Integer taskId) {
         try {
