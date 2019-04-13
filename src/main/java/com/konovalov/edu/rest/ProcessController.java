@@ -181,7 +181,6 @@ public class ProcessController {
                                     minQueueSize = currenstSize;
                                     managerId = user.getUserId();
                                     managerName = user.getFirstName() + " " + user.getSecondName();
-                                    continue;
                                 }
                             } else {
                                 managerId = user.getUserId();
